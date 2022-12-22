@@ -2,10 +2,10 @@
 # Script to log connection lost to local gateway in a csv file
 # Verison 1; next version will include multiple interfaces at once
 # By Vince Winter(vincex.winter@intel.com)
-# Last updated on 12/21/2022
+# Last updated on 12/22/2022
 
 ### Varibles ###
-GATEWAY=$(ip route show 0.0.0.0/0 | awk '{print $3}')
+GATEWAY=${GATEWAY:-$(ip route show 0.0.0.0/0 | awk '{print $3}')}
 INTERATE=${INTERATE:-10}
 LOG_FILE=${LOG_FILE:-~/ping-log.csv}
 ###
@@ -32,7 +32,7 @@ if PING_RESULTS=$(fping --retry=1 --addr --name "${GATEWAY}"); then
 else
   PING_EXIT=1
 fi
-# This is seperated from the if state so not to effect exit status of fping
+# This is seperated from the if statment so the state not to effect exit status of fping
 PING_RESULTS=$(echo "${PING_RESULTS}" | awk -F ")" '{print $1")"}')
 }
 
@@ -40,6 +40,7 @@ hostname_ip(){
 HOST_NAME=$(hostname)
 IP_ADDR=$(ip route get "${GATEWAY}" | sed -n 's/.*src \([0-9.]\+\).*/\1/p')
 }
+
 table_header(){
 echo "date/time, local hostname/ip, gateway hostname/ip, Status" >>"${LOG_FILE}"
 }
